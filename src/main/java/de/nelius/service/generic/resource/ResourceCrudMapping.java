@@ -4,14 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.nelius.service.generic.repository.CrudRepository;
 import de.nelius.service.generic.updater.JacksonUpdater;
 import de.nelius.service.generic.updater.Updater;
-import de.nelius.service.entities.Response;
 import io.dropwizard.hibernate.UnitOfWork;
-import org.eclipse.jetty.http.HttpStatus;
 import org.glassfish.jersey.process.Inflector;
 import org.glassfish.jersey.server.model.Resource;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
@@ -111,9 +110,9 @@ public class ResourceCrudMapping<T, S extends Serializable> {
             @UnitOfWork
             public Object apply(ContainerRequestContext containerRequestContext) {
                 if (crudRepository.delete((S) containerRequestContext.getUriInfo().getPathParameters().get("id").get(0))) {
-                    return new Response(HttpStatus.NO_CONTENT_204);
+                    return Response.noContent().build();
                 }
-                return new Response(HttpStatus.NOT_FOUND_404);
+                return Response.status(Response.Status.NOT_FOUND).build();
             }
         };
     }

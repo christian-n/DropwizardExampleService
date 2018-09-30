@@ -1,12 +1,13 @@
 package de.nelius.service;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import de.nelius.service.generic.repository.CrudRepository;
 import de.nelius.service.generic.repository.SimpleCrudRepository;
 import de.nelius.service.generic.resource.ResourceCrudMapping;
 import de.nelius.service.health.DbHealth;
 import de.nelius.service.entities.Address;
 import de.nelius.service.entities.Person;
-import de.nelius.service.simple.PersonEndpoint;
+import de.nelius.service.simple.PersonResource;
 import de.nelius.service.simple.PersonRepository;
 import de.nelius.service.security.user.InMemoryUserProvider;
 import de.nelius.service.security.OAuth2Authenticator;
@@ -41,6 +42,7 @@ public class ServiceStarter extends Application<ServiceConfiguration> {
     public void initialize(Bootstrap<ServiceConfiguration> bootstrap) {
         bootstrap.setConfigurationSourceProvider(path -> getClass().getResourceAsStream("/" + path));
         bootstrap.addBundle(hibernateBundle);
+        bootstrap.getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 
     @Override
@@ -60,7 +62,7 @@ public class ServiceStarter extends Application<ServiceConfiguration> {
      */
     private void configureResourcesAsBasic(ServiceConfiguration configuration, Environment environment) {
         PersonRepository personRepository = new PersonRepository(hibernateBundle.getSessionFactory());
-        environment.jersey().register(new PersonEndpoint(personRepository));
+        environment.jersey().register(new PersonResource(personRepository));
         dbHealth.addRepository(personRepository);
     }
 

@@ -2,7 +2,6 @@ package de.nelius.service.simple;
 
 import com.codahale.metrics.annotation.Timed;
 import de.nelius.service.entities.Person;
-import de.nelius.service.entities.Response;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.PATCH;
 import org.eclipse.jetty.http.HttpStatus;
@@ -12,16 +11,17 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Map;
 
 @Path("/person")
 @Produces(MediaType.APPLICATION_JSON)
-public class PersonEndpoint {
+public class PersonResource {
 
     private PersonRepository personRepository;
 
-    public PersonEndpoint(PersonRepository personRepository) {
+    public PersonResource(PersonRepository personRepository) {
         this.personRepository = personRepository;
     }
 
@@ -76,9 +76,9 @@ public class PersonEndpoint {
     @RolesAllowed("write")
     public Response delete(@PathParam("id") String id) {
         if (personRepository.delete(id)) {
-            return new Response(HttpStatus.NO_CONTENT_204);
+            return Response.noContent().build();
         }
-        return new Response(HttpStatus.NOT_FOUND_404);
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 
     private Person update(String id, Map<String, Object> body) {
