@@ -1,10 +1,23 @@
-package de.nelius.service.resource;
+package de.nelius.service.entities;
 
+import javax.persistence.*;
+
+/**
+ * Example {@link Entity} that represents a simple person.
+ *
+ * @author Christian Nelius
+ */
+@Entity
 public class Person {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
+    @Column
     private String forename;
+    @Column
     private String surname;
+    @Column
     private String birthDate;
 
     public String getId() {

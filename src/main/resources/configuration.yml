@@ -1,0 +1,11 @@
+jwt:
+  secret: somesecret
+  issuer: http://localhost:8080
+database:
+  driverClass: org.h2.Driver
+  url: jdbc:h2:file:./test-database
+  user: sa
+  password:
+  properties:
+          hibernate.dialect: org.hibernate.dialect.H2Dialect
+          hibernate.hbm2ddl.auto: update

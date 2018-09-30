@@ -1,13 +1,14 @@
-package de.nelius.service.resource.repository;
+package de.nelius.service.simple;
 
-import de.nelius.service.resource.Person;
+import de.nelius.service.entities.Person;
+import de.nelius.service.generic.repository.CrudRepository;
 import io.dropwizard.hibernate.AbstractDAO;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 
 import java.util.List;
 
-public class PersonRepository extends AbstractDAO<Person> implements CrudRepository<Person> {
+public class PersonRepository extends AbstractDAO<Person> implements CrudRepository<Person, String> {
 
     /**
      * Creates a new DAO with a given session provider.
@@ -30,7 +31,7 @@ public class PersonRepository extends AbstractDAO<Person> implements CrudReposit
         return persist(person);
     }
 
-    public boolean delete(String id){
+    public boolean delete(String id) {
         currentSession().delete(get(id));
         return get(id) == null;
     }

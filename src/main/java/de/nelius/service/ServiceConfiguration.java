@@ -1,9 +1,9 @@
 package de.nelius.service;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.nelius.service.security.JwtFactory;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
-import io.dropwizard.server.ServerFactory;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -19,7 +19,8 @@ public class ServiceConfiguration extends Configuration {
 
     @Valid
     @NotNull
-    private String serviceName = null;
+    private JwtFactory jwtFactory;
+
 
     @JsonProperty("database")
     public DataSourceFactory getDataSourceFactory() {
@@ -31,13 +32,13 @@ public class ServiceConfiguration extends Configuration {
         this.dataSourceFactory = dataSourceFactory;
     }
 
-    @JsonProperty("service.name")
-    public String getServiceName(){
-        return serviceName;
+    @JsonProperty("jwt")
+    public JwtFactory getJwtFactory() {
+        return jwtFactory;
     }
 
-    @JsonProperty("service.name")
-    public void setServiceName(String serviceName){
-        this.serviceName = serviceName;
+    @JsonProperty("jwt")
+    public void setJwtFactory(JwtFactory jwtFactory) {
+        this.jwtFactory = jwtFactory;
     }
 }

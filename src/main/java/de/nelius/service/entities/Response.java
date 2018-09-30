@@ -1,12 +1,15 @@
-package de.nelius.service.resource;
+package de.nelius.service.entities;
 
-import org.eclipse.jetty.http.HttpStatus;
-
-public class Status {
+/**
+ * Response entity with an http status.
+ *
+ * @author Christian Nelius
+ */
+public class Response {
 
     private int httpStatus;
 
-    public Status(int httpStatus) {
+    public Response(int httpStatus) {
         this.httpStatus = httpStatus;
     }
 
