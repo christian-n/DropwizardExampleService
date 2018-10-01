@@ -11,6 +11,15 @@ import io.dropwizard.auth.Authenticator;
 
 import java.util.Optional;
 
+/**
+ * Jwt implementation of {@link Authenticator}. Verifies the signature with HMAC256 algorithm and a secret and decodes the claims.
+ * <p>
+ * That's just an example. We could also use other {@link Algorithm} or a {@link java.security.KeyStore}.
+ * <p>
+ * In this case we start with subject claim but we can add all other oauth2 claims.
+ *
+ * @author Christian Nelius
+ */
 public class JwtAuthenticator implements Authenticator<String, User> {
 
     private JwtFactory jwtFactory;
