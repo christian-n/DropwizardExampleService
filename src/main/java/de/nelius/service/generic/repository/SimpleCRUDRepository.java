@@ -1,16 +1,19 @@
 package de.nelius.service.generic.repository;
 
-import de.nelius.service.generic.repository.CrudRepository;
-import io.dropwizard.hibernate.AbstractDAO;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * Repository that offers CRUD functionality. Layer between Hibernate and {@link org.glassfish.jersey.server.model.Resource}.
+ *
+ * @author Christian Nelius
+ */
 import static java.util.Objects.requireNonNull;
 
-public class SimpleCrudRepository<T, S extends Serializable> implements CrudRepository<T, S> {
+public class SimpleCRUDRepository<T, S extends Serializable> implements CRUDRepository<T, S> {
 
     private Class<T> domainClass;
     private SessionFactory sessionFactory;
@@ -20,7 +23,7 @@ public class SimpleCrudRepository<T, S extends Serializable> implements CrudRepo
      *
      * @param sessionFactory a session provider
      */
-    public SimpleCrudRepository(Class<T> domainClass, SessionFactory sessionFactory) {
+    public SimpleCRUDRepository(Class<T> domainClass, SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
         this.domainClass = domainClass;
     }

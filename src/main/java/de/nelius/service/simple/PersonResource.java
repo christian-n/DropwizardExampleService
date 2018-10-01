@@ -15,6 +15,11 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Basic {@link org.glassfish.jersey.server.model.Resource} for {@link Person}.
+ *
+ * @author Christian Nelius
+ */
 @Path("/person")
 @Produces(MediaType.APPLICATION_JSON)
 public class PersonResource {

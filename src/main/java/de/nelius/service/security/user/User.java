@@ -4,6 +4,11 @@ import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Simple user that implements {@link Principal}.
+ *
+ * @author Christian Nelius
+ */
 public class User implements Principal {
 
     private String username;

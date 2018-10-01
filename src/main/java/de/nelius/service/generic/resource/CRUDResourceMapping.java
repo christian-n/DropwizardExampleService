@@ -1,7 +1,7 @@
 package de.nelius.service.generic.resource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.nelius.service.generic.repository.CrudRepository;
+import de.nelius.service.generic.repository.CRUDRepository;
 import de.nelius.service.generic.updater.JacksonUpdater;
 import de.nelius.service.generic.updater.Updater;
 import io.dropwizard.hibernate.UnitOfWork;
@@ -16,26 +16,26 @@ import java.io.Serializable;
 import java.util.Map;
 
 /**
- * Maps Jersey {@link Resource} with {@link CrudRepository}.
+ * Maps Jersey {@link Resource} with {@link CRUDRepository}.
  *
  * @author Christian Nelius
  */
-public class ResourceCrudMapping<T, S extends Serializable> {
+public class CRUDResourceMapping<T, S extends Serializable> {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private Class<T> resource;
-    private CrudRepository<T, S> crudRepository;
+    private CRUDRepository<T, S> crudRepository;
     private String path;
     private Updater updater;
 
-    public ResourceCrudMapping(String path, Class<T> resource, CrudRepository<T, S> crudRepository) {
+    public CRUDResourceMapping(String path, Class<T> resource, CRUDRepository<T, S> crudRepository) {
         this.path = path;
         this.resource = resource;
         this.crudRepository = crudRepository;
         this.updater = new JacksonUpdater();
     }
 
-    public ResourceCrudMapping(String path, Class<T> resource, CrudRepository<T, S> crudRepository, Updater updater) {
+    public CRUDResourceMapping(String path, Class<T> resource, CRUDRepository<T, S> crudRepository, Updater updater) {
         this.path = path;
         this.resource = resource;
         this.crudRepository = crudRepository;

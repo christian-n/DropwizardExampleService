@@ -10,6 +10,11 @@ import javax.validation.constraints.NotNull;
 
 /**
  * Service configuration extends Dropwizards {@link Configuration}
+ * <p>
+ * Contains {@link DataSourceFactory} for datasource configuration and
+ * {@link JwtFactory} for security configuration.
+ *
+ * @author Christian Nelius
  */
 public class ServiceConfiguration extends Configuration {
 

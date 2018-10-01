@@ -11,12 +11,12 @@ import io.dropwizard.auth.Authenticator;
 
 import java.util.Optional;
 
-public class OAuth2Authenticator implements Authenticator<String, User> {
+public class JwtAuthenticator implements Authenticator<String, User> {
 
     private JwtFactory jwtFactory;
     private UserProvider userProvider;
 
-    public OAuth2Authenticator(JwtFactory jwtFactory, UserProvider userProvider) {
+    public JwtAuthenticator(JwtFactory jwtFactory, UserProvider userProvider) {
         this.jwtFactory = jwtFactory;
         this.userProvider = userProvider;
     }

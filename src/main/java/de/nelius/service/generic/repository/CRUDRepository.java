@@ -9,7 +9,7 @@ import java.util.List;
  * @param <T> {@link javax.persistence.Entity}
  * @author Christian Nelius
  */
-public interface CrudRepository<T, S extends Serializable> {
+public interface CRUDRepository<T, S extends Serializable> {
 
     List<T> getAll();
 

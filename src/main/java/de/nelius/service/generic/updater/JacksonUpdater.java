@@ -6,6 +6,10 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
+ * Jackson implementation of {@link Updater} for generic dto <-> entity mapping.
+ * <p>
+ * Use with caution! Its just a basic concept.
+ *
  * @author Christian Nelius
  */
 public class JacksonUpdater implements Updater {

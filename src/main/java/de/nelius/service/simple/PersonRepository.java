@@ -1,14 +1,22 @@
 package de.nelius.service.simple;
 
 import de.nelius.service.entities.Person;
-import de.nelius.service.generic.repository.CrudRepository;
+import de.nelius.service.generic.repository.CRUDRepository;
 import io.dropwizard.hibernate.AbstractDAO;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 
 import java.util.List;
 
-public class PersonRepository extends AbstractDAO<Person> implements CrudRepository<Person, String> {
+/**
+ * Basic repository that extends {@link AbstractDAO}.
+ * Implements {@link CRUDRepository} for {@link com.codahale.metrics.health.HealthCheck}.
+ * <p>
+ * Used as middle layer.
+ *
+ * @author Christian Nelius
+ */
+public class PersonRepository extends AbstractDAO<Person> implements CRUDRepository<Person, String> {
 
     /**
      * Creates a new DAO with a given session provider.
