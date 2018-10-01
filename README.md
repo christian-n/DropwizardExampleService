@@ -20,14 +20,35 @@ Adds JWT Bearer token support.
 We use Gradle for building, H2 as in memory test database and Hibernate as ORM.
 
 ------------
+- [Dropwizard RESTful/GraphQL Example Service](#dropwizard-restfulgraphql-example-service)
+  - [Features](#features)
+  - [Description](#description)
+  - [Gradle Dependencies](#gradle-dependencies)
+    - [Core](#core)
+    - [Hibernate](#hibernate)
+    - [Security](#security)
+    - [Database](#database)
+  - [Deployment](#deployment)
+    - [Building](#building)
+    - [Starting](#starting)
+  - [Service Documentation](#service-documentation)
+    - [Application](#application)
+      - [Initialize](#initialize)
+      - [Run](#run)
+      - [Registration](#registration)
+    - [Resources](#resources)
+    - [Configuration](#configuration)
+  - [Health](#health)
+  - [Security](#security)
+    - [User](#user)
+    - [Method security](#method-security)
+    - [Filter](#filter)
+      - [Authentication](#authentication)
+      - [Authorization](#authorization)
+  - [Conclusion](#conclusion)
+- [Generic Features](#generic-features)
+- [GraphQL](#graphql)
 
-
-
-**Table of Contents**
-
-[TOCM]
-
-[TOC]
 
 ### Gradle Dependencies
 ------------
