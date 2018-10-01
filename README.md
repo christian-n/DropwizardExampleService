@@ -1,6 +1,6 @@
-##Dropwizard RESTful/GraphQL Example Service
+## Dropwizard RESTful/GraphQL Example Service
 
-###Features
+### Features
 
 - Basic resources and DAO concept
 - Generic resources and DAO concept
@@ -11,7 +11,7 @@
 - Secured with OAuth using JWT
 - ORM with Hibernate
 
-###Description
+### Description
 
 Easy to use concept of a  RESTful service using Dropwizard. Using GraphQL as a complementary API.
 Shows the usage of basic resources and DAO layers.  Includes a concept for generic handling of resources.
@@ -29,28 +29,28 @@ We use Gradle for building, H2 as in memory test database and Hibernate as ORM.
 
 [TOC]
 
-###Gradle Dependencies
+### Gradle Dependencies
 ------------
-####Core 
+#### Core 
 `compile group: 'io.dropwizard', name: 'dropwizard-core', version: '1.3.5'`
-####Hibernate
+#### Hibernate
 `compile group: 'io.dropwizard', name: 'dropwizard-hibernate', version: '1.3.5'`
-####Security
+#### Security
 `compile group: 'io.dropwizard', name: 'dropwizard-auth', version: '1.3.5'`
 
 `compile group: 'com.auth0', name: 'java-jwt', version: '3.4.0'`
-####Database
+#### Database
 `compile group: 'com.h2database', name: 'h2', version: '1.4.197`
 
-###Deployment
+### Deployment
 ------------
-####Building
+#### Building
 To build the Gradle project type
 
 `./gradlew build`
 
 in your console.
-####Starting
+#### Starting
 
 Go to your `/build` folder and start the application server with command
 
@@ -59,7 +59,7 @@ Go to your `/build` folder and start the application server with command
 you could specify our own configuration YML or use the default one.
 
 
-###Service Documentation
+### Service Documentation
 ------------
 ####Application
 Lets start with the application. In the `ServiceStarter` we extend `Application` with our specific configuration class `ServiceConfiguration`. Add a `main(String[] args)` method as usual that initiates the service.
@@ -83,7 +83,7 @@ First we need to bootstap the application and add the hibernate bundle. Lets add
         bootstrap.getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 ```
-#####Run
+##### Run
 Now we take a look at the run method. This is where we register our resources and to the Jersey environment and add auth support for JWT token.
 
 ```java
@@ -95,7 +95,7 @@ Now we take a look at the run method. This is where we register our resources an
         configureHealth(configuration, environment);
     }
 ```
-#####Registration
+##### Registration
 Register the resource and its repository in the `ServiceStarter` and add the repository to our database health.
 ```java
     private void configureResourcesAsBasic(ServiceConfiguration configuration, Environment environment) {
@@ -121,7 +121,7 @@ And last but not least we gather a little bit of metric with `DbHealth`.
     }
 ```
 
-####Resources
+#### Resources
 First we create a `PersonRepository` as a DAO for our entity `Person`. Dropwizard has a simple dao class `AbstractDAO` for that. We use a interface better abstraction of DAO and Entity called `CRUDRepository` that implements basic CreateReadUpdateDelete methods. 
 
 ```java
@@ -242,7 +242,7 @@ The reason inject `Map<String, Object>` instead of `Person` (whats to totally po
         return personRepository.save(source);
     }
 ```
-####Configuration
+#### Configuration
 Our configuration contains a `DataSourceFactory` for the database connection properties and a `JwtFactory` for token secret and issuer.
 
 ```java
@@ -279,7 +279,7 @@ public class ServiceConfiguration extends Configuration {
 }
 
 ```
-###Health
+### Health
 Metrics are an important factor for service deployment so we add a simple database health `DbHealth` class that extends `HealthCheck` and takes all `CRUDRepository` instances (therefore the abstraction) and checks them with a `SELECT * FROM PERSON` statement.
 
 ```java
@@ -306,8 +306,8 @@ public class DbHealth extends HealthCheck {
 }
 ```
 
-###Security
-####User
+### Security
+#### User
 A simple `Principle` representation with roles.
 
 ```java
@@ -355,12 +355,12 @@ public class InMemoryUserProvider implements UserProvider {
 
 ```
 
-####Method security
+#### Method security
 We used a role based method security with the `@RolesAllowed` annotation. For `GET` requests we added a `read` role and for `POST, PUT, PATCH, DELETE` a `write` role.
 
-####Filter
+#### Filter
 We add the `AuthDynamicFeature` that enables with in conjunction with `RolesAllowedDynamicFeature` authentication and authorization. Dropwizard has OAuth support out of the box with `OAuthCredentialAuthFilter`.  
-#####Authentication
+##### Authentication
 JWT is a common way for authentication. There is a lack of support but we use the handy [auth0-jwt](https://auth0.com/docs/jwt "auth0-jwt") library to verify and decode token. We implement a `JwtAuthenticator` class and extend `Authenticator`.
 
 ```java
@@ -386,7 +386,7 @@ public class JwtAuthenticator implements Authenticator<String, User> {
     }
 }
 ```
-#####Authorization
+##### Authorization
 Now we need to authorize the user with its roles against the method roles. We added an implementation of `Authorizer` with the class `UserAuthorizer`.
 ```java
 public class UserAuthorizer implements Authorizer<User> {
@@ -398,7 +398,7 @@ public class UserAuthorizer implements Authorizer<User> {
 
 }
 ```
-###Conclusion
+### Conclusion
 ------------
 
 Dropwizard allows us to deploy RESTful services in an easy and fast way. The bootstraping mechanism pretty simple to understand and the performance is superior to frameworks like [Spring Boot](http://spring.io/projects/spring-boot "Spring Boot"). We should take note that Spring ecosystem is way better so its not always an easy decision between these two.
@@ -406,6 +406,6 @@ Dropwizard allows us to deploy RESTful services in an easy and fast way. The boo
 You can easly combine Dropwizard with dependency injection frameworks like [Dagger](https://google.github.io/dagger/ "Dagger"), [HK2](https://javaee.github.io/hk2/ "HK2") or [Spring](https://spring.io/ "Spring") and get the most out of it.
 
 
-##Generic Features
+## Generic Features
 ## GraphQL
 
