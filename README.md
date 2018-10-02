@@ -48,10 +48,10 @@ We use Gradle for building, H2 as in memory test database and Hibernate as ORM.
   - [Conclusion](#conclusion)
 - [Generic Features](#generic-features)
   - [Repositories](#repositories)
-  - [Resources](#resources)
+  - [Resources](#resources-1)
   - [Updater](#updater)
-  - [Registration](#registration)
-  - [Conclusion](#conclusion)
+  - [Registration](#registration-1)
+  - [Conclusion](#conclusion-1)
 - [GraphQL](#graphql)
 
 
