@@ -47,6 +47,11 @@ We use Gradle for building, H2 as in memory test database and Hibernate as ORM.
       - [Authorization](#authorization)
   - [Conclusion](#conclusion)
 - [Generic Features](#generic-features)
+  - [Repositories](#repositories)
+  - [Resources](#resources)
+  - [Updater](#updater)
+  - [Registration](#registration)
+  - [Conclusion](#conclusion)
 - [GraphQL](#graphql)
 
 
@@ -428,5 +433,181 @@ You can easly combine Dropwizard with dependency injection frameworks like [Dagg
 
 
 ## Generic Features
+
+### Repositories
+Lets add some generic flavor to the service. We use our `CRUDRepository` and add a generic implementation that works for every entity. We use Hibernate directly instead of `AbstractDAO` just because it lacks target detection at runtime.
+
+```java
+public class SimpleCRUDRepository<T, S extends Serializable> implements CRUDRepository<T, S> {
+
+    private Class<T> domainClass;
+    private SessionFactory sessionFactory;
+
+    public SimpleCRUDRepository(Class<T> domainClass, SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+        this.domainClass = domainClass;
+    }
+
+    public List<T> getAll() {
+        return requireNonNull((Query<T>) sessionFactory.getCurrentSession().createQuery("from " + domainClass.getSimpleName())).list();
+    }
+
+    public T getOne(S id) {
+        return sessionFactory.getCurrentSession().get(domainClass, requireNonNull(id));
+    }
+
+    public T save(T object) {
+        sessionFactory.getCurrentSession().saveOrUpdate(requireNonNull(object));
+        return object;
+    }
+
+    public boolean delete(S id) {
+        sessionFactory.getCurrentSession().delete(getOne(id));
+        return getOne(id) == null;
+    }
+
+}
+```
+### Resources
+For resource mappings we use Jerseys `Resource` and programmatically add resource endpoints. `CRUDResourceMapping` is a class that helps us with mapping CRUD methods to a jersey resources. We could also use a builder pattern here but thats just a simple concept and should be used with caution. Therefore we skip the use of Dropwizards `ObjectMapper` and go straight with our own one. Keep in mind that configurations did not apply  in this case.
+
+```java
+public class CRUDResourceMapping<T, S extends Serializable> {
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private Class<T> resource;
+    private CRUDRepository<T, S> crudRepository;
+    private String path;
+    private Updater updater;
+
+    public CRUDResourceMapping(String path, Class<T> resource, CRUDRepository<T, S> crudRepository) {
+        this.path = path;
+        this.resource = resource;
+        this.crudRepository = crudRepository;
+        this.updater = new JacksonUpdater();
+    }
+
+    public CRUDResourceMapping(String path, Class<T> resource, CRUDRepository<T, S> crudRepository, Updater updater) {
+        this.path = path;
+        this.resource = resource;
+        this.crudRepository = crudRepository;
+        this.updater = updater;
+    }
+
+    public Resource getResource() {
+        Resource.Builder builder = Resource.builder(path);
+        builder.path(path);
+        builder.addMethod("GET").produces(MediaType.APPLICATION_JSON).handledBy(getAll());
+        builder.addChildResource("{id}").addMethod("GET").produces(MediaType.APPLICATION_JSON).handledBy(get());
+        builder.addMethod("POST").produces(MediaType.APPLICATION_JSON).handledBy(post());
+        builder.addChildResource("{id}").addMethod("PUT").produces(MediaType.APPLICATION_JSON).handledBy(update());
+        builder.addChildResource("{id}").addMethod("PATCH").produces(MediaType.APPLICATION_JSON).handledBy(update());
+        builder.addChildResource("{id}").addMethod("DELETE").produces(MediaType.APPLICATION_JSON).handledBy(delete());
+        return builder.build();
+    }
+
+
+    private Inflector<ContainerRequestContext, Object> getAll() {
+        return new Inflector<ContainerRequestContext, Object>() {
+            @Override
+            @UnitOfWork
+            @Timed
+            @RolesAllowed("read")
+            public Object apply(ContainerRequestContext containerRequestContext) {
+                return crudRepository.getAll();
+            }
+        };
+    }
+
+    private Inflector<ContainerRequestContext, Object> get() {
+        return new Inflector<ContainerRequestContext, Object>() {
+            @Override
+            @UnitOfWork
+            @Timed
+            @RolesAllowed("read")
+            public Object apply(ContainerRequestContext containerRequestContext) {
+                return crudRepository.getOne((S) containerRequestContext.getUriInfo().getPathParameters().get("id").get(0));
+            }
+        };
+    }
+
+    private Inflector<ContainerRequestContext, Object> post() {
+        return new Inflector<ContainerRequestContext, Object>() {
+            @Override
+            @UnitOfWork
+            @Timed
+            @RolesAllowed("write")
+            public Object apply(ContainerRequestContext containerRequestContext) {
+                try {
+                    return crudRepository.save(objectMapper.readValue(containerRequestContext.getEntityStream(), resource));
+                } catch (IOException e) {
+                    throw new MappingException(resource, e);
+                }
+            }
+        };
+    }
+
+    private Inflector<ContainerRequestContext, Object> update() {
+        return new Inflector<ContainerRequestContext, Object>() {
+            @Override
+            @UnitOfWork
+            @Timed
+            @RolesAllowed("read")
+            public Object apply(ContainerRequestContext containerRequestContext) {
+                try {
+                    return crudRepository.save((T) updater.update(crudRepository.getOne((S) containerRequestContext.getUriInfo().getPathParameters().get("id").get(0)),
+                            objectMapper.readValue(containerRequestContext.getEntityStream(), Map.class)));
+                } catch (IOException e) {
+                    throw new MappingException(resource, e);
+                }
+            }
+        };
+    }
+
+    private Inflector<ContainerRequestContext, Object> delete() {
+        return new Inflector<ContainerRequestContext, Object>() {
+            @Override
+            @UnitOfWork
+            public Object apply(ContainerRequestContext containerRequestContext) {
+                if (crudRepository.delete((S) containerRequestContext.getUriInfo().getPathParameters().get("id").get(0))) {
+                    return Response.noContent().build();
+                }
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+        };
+    }
+
+}
+```
+### Updater
+The `Updater` is a interface that let you handle the mapping between the DTO and the entity. For sophisticated resources you may want your own handling. For your generic concept there is a `JacksonUpdater` that uses Jacksons merging mechanism. This should cover most cases and minds most of Jacksons annotations. Handles also embedded entities but keep in mind that its not the way to [REST](https://www.martinfowler.com/articles/richardsonMaturityModel.html "REST").
+
+```java
+public class JacksonUpdater implements Updater {
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Override
+    public <T> T update(T source, Map<String, Object> dto) {
+        try {
+            return objectMapper.readerForUpdating(source).readValue(objectMapper.writeValueAsString(dto));
+        } catch (IOException e) {
+            throw new UpdaterException(e);
+        }
+    }
+
+}
+```
+#### Registration
+Last but not least we register the resources in our run method.
+```java
+    private void configureResourcesAsGeneric(ServiceConfiguration configuration, Environment environment) {
+        CRUDRepository<Address, String> addressRepository = new SimpleCRUDRepository<>(Address.class, hibernateBundle.getSessionFactory());
+        environment.jersey().getResourceConfig().registerResources(new CRUDResourceMapping<>("/address", Address.class, addressRepository).getResource());
+    }
+```
+### Conclusion
+Its simple as that to add generics to resources in Dropwizard. It saves time, boiler plate code and everything is in one place so win win? Not exactly especially the merging like Jackson does is a hassle to debug and fix. It requires knowledge of the framework capabilities and should be tested to death first before even thinking of putting it in production. Every framework specific bug could break your leg and version updates are far from easy. But nonetheless its a good alternative that should be used with caution.
+
 ## GraphQL
 
