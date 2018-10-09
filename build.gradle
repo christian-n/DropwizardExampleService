@@ -1,7 +1,7 @@
 plugins {
     id 'java'
+    id "com.github.onslip.gradle-one-jar" version "1.0.5"
 }
-
 group 'de.nelius'
 version '1.0-SNAPSHOT'
 
@@ -18,6 +18,15 @@ dependencies {
     compile group: 'io.dropwizard', name: 'dropwizard-auth', version: '1.3.5'
     compile group: 'com.h2database', name: 'h2', version: '1.4.197'
     compile group: 'com.auth0', name: 'java-jwt', version: '3.4.0'
+    compile group: 'com.bmuschko', name: 'gradle-docker-plugin', version: '3.2.4'
+    //jaxb dependencies
+    //Needed for java 11 so better do it right
+    compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+    compile group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0.1'
+    compile group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.1'
+    compile group: 'javax.activation', name: 'activation', version: '1.1.1'
+}
 
-
+task oneJar(type: OneJar) {
+    mainClass = 'de.nelius.service.ServiceStarter'
 }

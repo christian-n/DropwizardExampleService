@@ -2,3 +2,12 @@ User token valid to 2025
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzaW1wbGUtdXNlciIsIm5hbWUiOiJKb2huIERvZSIsImlhdCI6MTUzODMyMDAzMCwiZXhwIjoxNzU5MDM1MjgyLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAiLCJhdWQiOiJ0ZXN0LXNlcnZpY2UifQ.uOfTiQEBbJL1nH8qblzVhnG7Rb6bri9mW9u40CBXxTY
 Admin token valid to 2025
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzaW1wbGUtYWRtaW4iLCJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE1MzgzMjAwMzAsImV4cCI6MTc1OTAzNTI4MiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwIiwiYXVkIjoidGVzdC1zZXJ2aWNlIn0.iWX4eqayhnps9m8FwRBtkW4S6-57Ghs_lgSw9lxJbTo
+
+stop all containers:
+docker kill $(docker ps -q)
+
+remove all containers
+docker rm $(docker ps -a -q)
+
+remove all docker images
+docker rmi $(docker images -q)
